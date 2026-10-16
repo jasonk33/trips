@@ -81,6 +81,7 @@ export function updateLibrary({html,pages,libraryLink,password,entry,checkOnly =
   const paths = [...records.keys()].sort();
   if (JSON.stringify(paths) !== JSON.stringify([...pages.keys()].sort())) throw new Error('Library inventory mismatch: every root HTML report must have exactly one catalog entry. Add metadata for new pages; do not silently drop missing pages.');
   const secrets = [key.toString('base64url')];
+  if (password) secrets.push(password);
   for (const report of records.values()) {
     if (['title','description','collection','href'].some(field => typeof report[field] !== 'string' || !report[field].trim()) || typeof report.protected !== 'boolean') throw new Error('Incomplete report metadata.');
     const source = pages.get(report.path);
@@ -91,7 +92,12 @@ export function updateLibrary({html,pages,libraryLink,password,entry,checkOnly =
       if (!encrypted) throw new Error('Private report must contain an encrypted wrapper, not plaintext.');
       const reportKey = linkKey(url.href,base + report.path);
       const plaintext = decrypt(encrypted.payload,reportKey).toString('utf8');
-      if (encrypted.id === 'encrypted-report' ? !/^<!doctype html>/i.test(plaintext) : JSON.parse(plaintext).sharing !== 'shared') throw new Error('Invalid decrypted private report.');
+      if (encrypted.id === 'encrypted-report') {
+        if (!plaintext.startsWith('<!doctype html>')) throw new Error('Invalid decrypted private report.');
+      } else {
+        const trip = JSON.parse(plaintext);
+        if (trip.id !== 'hawaii-nye-2026' || trip.sharing !== 'shared') throw new Error('Invalid decrypted private report.');
+      }
       secrets.push(reportKey.toString('base64url'));
     } else if (encrypted || url.hash) {
       throw new Error('An encrypted report needs its complete private sharing link.');

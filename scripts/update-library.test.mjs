@@ -69,10 +69,8 @@ test('password input unlocks the same catalog without storing or rotating it', (
   assert.throws(() => updateLibrary({...f,libraryLink:undefined,password:'wrong',checkOnly:true}));
   assert.throws(() => updateLibrary({...f,libraryLink:base + '#key=' + randomBytes(32).toString('base64url'),checkOnly:true}));
   assert.throws(() => updateLibrary({...f,libraryLink:undefined,password:undefined,checkOnly:true}), /credential/i);
-  for (const password of ['a',' password with spaces ']) {
-    const g = fixture(password);
-    assert.equal(updateLibrary({...g,libraryLink:undefined,password,checkOnly:true}),g.html);
-  }
+  const g = fixture(' password with spaces ');
+  assert.equal(updateLibrary({...g,libraryLink:undefined,password:g.password,checkOnly:true}),g.html);
 });
 
 test('a new private report requires a valid complete encrypted sharing link', () => {
@@ -125,4 +123,24 @@ test('routine edits keep privacy and reject leaked keys or lost encrypted conten
   f.pages.set('public.html','<!doctype html>');
   f.pages.set('private.html','<!doctype html><h1>Accidentally unencrypted</h1>');
   assert.throws(() => updateLibrary({...f,checkOnly:true}), /encrypted|private/i);
+});
+
+test('private report validation matches the browser wrapper contracts', () => {
+  const f = fixture();
+  f.pages.set('private.html',`<!doctype html><script id="encrypted-report" type="application/json">${JSON.stringify(encrypt('<!DOCTYPE html><h1>Not accepted by the report wrapper</h1>',f.reportKey))}</script>`);
+  assert.throws(() => updateLibrary({...f,checkOnly:true}), /private report/i);
+  for (const id of ['wrong-trip','hawaii-nye-2026']) {
+    const data = JSON.stringify({id,sharing:'shared'});
+    f.pages.set('private.html',`<!doctype html><script id="encrypted-trip-data" type="application/json">${JSON.stringify(encrypt(data,f.reportKey))}</script>`);
+    if (id === 'wrong-trip') assert.throws(() => updateLibrary({...f,checkOnly:true}), /private report/i);
+    else assert.equal(updateLibrary({...f,checkOnly:true}),f.html);
+  }
+});
+
+test('password-authenticated checks reject plaintext password matches', () => {
+  for (const password of ['synthetic-test-password','a']) {
+    const f = fixture(password);
+    f.pages.set('public.html','<!doctype html><p>Accidentally included password: ' + password + '</p>');
+    assert.throws(() => updateLibrary({...f,libraryLink:undefined,password,checkOnly:true}), /password|secret/i);
+  }
 });
