@@ -38,15 +38,15 @@ input{min-width:0;flex:1;background:#0d1118;border:1px solid #455267;border-radi
   <h1 id="locked-title">Your pages, one place.</h1>
   <p class="intro">A small library for travel plans, research and the things worth keeping.</p>
   <form id="unlock-form">
-    <label for="library-key">Library link or key</label>
+    <label for="library-key">Password</label>
     <div class="input-row">
-      <input id="library-key" type="password" autocomplete="off" spellcheck="false" required aria-describedby="unlock-help unlock-status">
+      <input id="library-key" name="password" type="password" autocomplete="current-password" spellcheck="false" required aria-describedby="unlock-help unlock-status">
       <button type="submit">Open library</button>
     </div>
-    <p id="unlock-help" class="help">Open your saved bookmark to unlock automatically, or paste its full link here.</p>
+    <p id="unlock-help" class="help">Enter your password. Your saved bookmark still opens automatically.</p>
     <p id="unlock-status" class="status" role="status" aria-live="polite"></p>
   </form>
-  <p class="privacy">The library and its private report links are encrypted. The key stays in your bookmark, not in the public site. No account, cookies or browser storage are needed.</p>
+  <p class="privacy">The library and its private report links are encrypted. Your password unlocks them in this browser; the site does not store or send your password. Use a strong, unique password for sensitive content.</p>
   <noscript><p class="status">JavaScript is needed to decrypt this library in your browser.</p></noscript>
 </section>
 <section id="library" hidden aria-labelledby="library-title">
@@ -63,7 +63,7 @@ input{min-width:0;flex:1;background:#0d1118;border:1px solid #455267;border-radi
   <p class="privacy">Keep this library bookmark for yourself: it unlocks the private reports below. To share one report, open it and share that report's own link instead. Reports open in a new tab so your library stays here.</p>
 </section>
 </main>
-<script id="encrypted-library" type="application/json">{"version":1,"algorithm":"AES-GCM","iv":"n6aF2DgHLJgMoDEx","ciphertext":"H5SpNi0m0qKJczi+7xOkanJo/Pb2UELIBQ7zvXbwcNe6FfkWzly6eFfVzFKOZgQuSMEE+gE7RyLGJWqh/QlvlbxfejzmLd6DO4WRmlgWSCRdipRk9akj1L6chAeLPfuVkNQhIEwwA3hzFPVl99BzxkkrEQK2k6B0A8dXdk8Upy0MammKIHp6pyZXTw9QhLHzxZyARPFjkkdpeaI7Vof1hGvfGhSuaQ5FplqLk/zPREdPe0cyjha50dAOeoDxR4mlZCyhPgFpGZcFd/OslybfLC2WzI1xhU+05aacmR7xAYkXmEbu8dm2XcDojOYoGG6+iKIqeboUzotmOMRZKays3NYAx5ZAZAHfs2x8ryCoe3y4M4QzFuINnTITnBgwpEAB3xPmzeflMRSwCHKtB4c5LUgjNzM4qo6fP6hp9z/nImAtGncNRyRqpY4QCtaYADAUFV0nz2EdR9oiRw2rYdLQxJ1nfs++mSq7nskfJ+dP21qkEAbqSGY78WRLngmUIdxUQau6JHfAdZnOVKYsYdoq2JXKRcR/xGJnVYiAwPEFrlMXoAJkKT1nV1Wl9eOFyxei/r4rtliZid2uQHU/377P38K6Ge5NnIc8ol3S4iTP1/0vmnMarRhaynsrwRGGf6hSJexSOiFYXZDAOXz//3az+uBhNZuO4dlk5D/4Idcl840vz4HtkGmSiE/Xei4NlhWollOHMdEFKwSyQhOXZ9CfqFmAxqE3u3QkqVkXZjOW6fMX2efV5VOQyfmLL6d1T6xA86RJHvAk7q7WIBsr19KsRh5H/igNqDWK4Kq4r1vdHt9aQCDs5GK6iFylUr8Wi83qiao5QdZmtuA9vLIeAFaC44k+4m25PTsk82hKheppojM5M7BEF6aCJQKZLCTuHUNuta8M/3PZw+hc6fxtfprcw22nfnsxKbNK0NiAC6cSXW7wE3LZP5x+2kvyYu9/CRpGuvBg3Khg0eEIHM1zfLes9ve+982u8Wh9DUzP5XQr74dKIPtbF2MQLx8FxZfgSNo9dDCOfZlcna7SbzBeYLDc7G8QIC0JhzVwEUL2UHbMseuNu2QjYHLQ9CbfZgEGE1Yy1Ozo6JfZyztDVqBn9NpEfGUBFoQ/qFoixS4BAhA0QUP7iqY0KKhp1CSIkJzlibywfMZCQmKuvpw3on3WU80DGFNob38XP+KqKEcCIrL7jEklcKPcDHgV9l+JSuNOywg7ZnntRa5/sQRmuQ69Wlz1xYWOjCHq7gZHl5GJ2cMVuqZh+OIj+MHHl7lY+JPbXteWfNV8Hcwc/fwb7u0n7LLUnz916YGJ1CdG93I2GWcVsLtWOhBAJBu628kZtwcNCU3awvQIyWanFcnAxBBfu+D/uPflNjfV3k9Qxkg9FGmo0uy08UzQonVRmpoeEjPOdG3LPspwjL5fD+59BcXjLYi8rg/9B/GZx6Xse3Sim/hU7tyqyPfkLKu7PU+xY0qUUsKMKF9nUCujuIOqOlHSBbsGotJyQaG53Zh0OofibWU2k+PzkfhphghCceXxN2YuRshmNgqwoMtxGX88oe/IN6JTraRA0LFuRMU="}</script>
+<script id="encrypted-library" type="application/json">{"version":1,"algorithm":"AES-GCM","iv":"n6aF2DgHLJgMoDEx","ciphertext":"H5SpNi0m0qKJczi+7xOkanJo/Pb2UELIBQ7zvXbwcNe6FfkWzly6eFfVzFKOZgQuSMEE+gE7RyLGJWqh/QlvlbxfejzmLd6DO4WRmlgWSCRdipRk9akj1L6chAeLPfuVkNQhIEwwA3hzFPVl99BzxkkrEQK2k6B0A8dXdk8Upy0MammKIHp6pyZXTw9QhLHzxZyARPFjkkdpeaI7Vof1hGvfGhSuaQ5FplqLk/zPREdPe0cyjha50dAOeoDxR4mlZCyhPgFpGZcFd/OslybfLC2WzI1xhU+05aacmR7xAYkXmEbu8dm2XcDojOYoGG6+iKIqeboUzotmOMRZKays3NYAx5ZAZAHfs2x8ryCoe3y4M4QzFuINnTITnBgwpEAB3xPmzeflMRSwCHKtB4c5LUgjNzM4qo6fP6hp9z/nImAtGncNRyRqpY4QCtaYADAUFV0nz2EdR9oiRw2rYdLQxJ1nfs++mSq7nskfJ+dP21qkEAbqSGY78WRLngmUIdxUQau6JHfAdZnOVKYsYdoq2JXKRcR/xGJnVYiAwPEFrlMXoAJkKT1nV1Wl9eOFyxei/r4rtliZid2uQHU/377P38K6Ge5NnIc8ol3S4iTP1/0vmnMarRhaynsrwRGGf6hSJexSOiFYXZDAOXz//3az+uBhNZuO4dlk5D/4Idcl840vz4HtkGmSiE/Xei4NlhWollOHMdEFKwSyQhOXZ9CfqFmAxqE3u3QkqVkXZjOW6fMX2efV5VOQyfmLL6d1T6xA86RJHvAk7q7WIBsr19KsRh5H/igNqDWK4Kq4r1vdHt9aQCDs5GK6iFylUr8Wi83qiao5QdZmtuA9vLIeAFaC44k+4m25PTsk82hKheppojM5M7BEF6aCJQKZLCTuHUNuta8M/3PZw+hc6fxtfprcw22nfnsxKbNK0NiAC6cSXW7wE3LZP5x+2kvyYu9/CRpGuvBg3Khg0eEIHM1zfLes9ve+982u8Wh9DUzP5XQr74dKIPtbF2MQLx8FxZfgSNo9dDCOfZlcna7SbzBeYLDc7G8QIC0JhzVwEUL2UHbMseuNu2QjYHLQ9CbfZgEGE1Yy1Ozo6JfZyztDVqBn9NpEfGUBFoQ/qFoixS4BAhA0QUP7iqY0KKhp1CSIkJzlibywfMZCQmKuvpw3on3WU80DGFNob38XP+KqKEcCIrL7jEklcKPcDHgV9l+JSuNOywg7ZnntRa5/sQRmuQ69Wlz1xYWOjCHq7gZHl5GJ2cMVuqZh+OIj+MHHl7lY+JPbXteWfNV8Hcwc/fwb7u0n7LLUnz916YGJ1CdG93I2GWcVsLtWOhBAJBu628kZtwcNCU3awvQIyWanFcnAxBBfu+D/uPflNjfV3k9Qxkg9FGmo0uy08UzQonVRmpoeEjPOdG3LPspwjL5fD+59BcXjLYi8rg/9B/GZx6Xse3Sim/hU7tyqyPfkLKu7PU+xY0qUUsKMKF9nUCujuIOqOlHSBbsGotJyQaG53Zh0OofibWU2k+PzkfhphghCceXxN2YuRshmNgqwoMtxGX88oe/IN6JTraRA0LFuRMU=","password":{"version":1,"kdf":"PBKDF2","hash":"SHA-256","iterations":600000,"salt":"aX8vCxWIZeUUrZGcJh4wWQ==","iv":"IeVE0JR8P3rzGjV/","ciphertext":"Ll7Nf/yDpU66qnJExpbk0C/COwd01+F3Ml12UZAKJuCG/qglcwjBhxlW1RcgMmjl"}}</script>
 <script>
 (() => {
   const gate = document.getElementById('gate');
@@ -133,11 +133,12 @@ input{min-width:0;flex:1;background:#0d1118;border:1px solid #455267;border-radi
     }
     document.getElementById('summary').textContent = `${reports.length} saved pages / ${groups.size} collections`;
   }
-  async function unlock(keyText, saveAddress = false) {
+  async function unlock(keyText, password) {
     const attempt = ++revision;
+    const usingPassword = typeof password === 'string';
     lock();
-    if (!keyText) return;
-    if (!/^[A-Za-z0-9_-]{43}$/.test(keyText)) {
+    if (!usingPassword && !keyText) return;
+    if (!usingPassword && !/^[A-Za-z0-9_-]{43}$/.test(keyText)) {
       status.textContent = 'That key is incomplete.';
       return;
     }
@@ -149,11 +150,21 @@ input{min-width:0;flex:1;background:#0d1118;border:1px solid #455267;border-radi
     try {
       const payload = JSON.parse(document.getElementById('encrypted-library').textContent);
       if (payload.version !== 1 || payload.algorithm !== 'AES-GCM') throw new Error('Unsupported encryption format.');
+      if (usingPassword) {
+        const access = payload.password;
+        if (access?.version !== 1 || access.kdf !== 'PBKDF2' || access.hash !== 'SHA-256' || access.iterations !== 600000) throw new Error('Unsupported password format.');
+        const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+        const passwordKey = await crypto.subtle.deriveKey({name:'PBKDF2',salt:decode(access.salt),iterations:access.iterations,hash:access.hash}, material, {name:'AES-GCM',length:256}, false, ['decrypt']);
+        const rawKey = await crypto.subtle.decrypt({name:'AES-GCM',iv:decode(access.iv)}, passwordKey, decode(access.ciphertext));
+        if (rawKey.byteLength !== 32) throw new Error('Invalid library key.');
+        if (attempt !== revision) return;
+        keyText = btoa(String.fromCharCode(...new Uint8Array(rawKey))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+      }
       const key = await crypto.subtle.importKey('raw', decode(keyText), 'AES-GCM', false, ['decrypt']);
       const plaintext = await crypto.subtle.decrypt({name:'AES-GCM',iv:decode(payload.iv)}, key, decode(payload.ciphertext));
       const reports = validate(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(plaintext)));
       if (attempt !== revision) return;
-      if (saveAddress) history.replaceState(null, '', '#key=' + keyText);
+      if (usingPassword) history.replaceState(null, '', '#key=' + keyText);
       render(reports);
       bookmark = location.origin + location.pathname + '#key=' + keyText;
       input.value = '';
@@ -163,18 +174,12 @@ input{min-width:0;flex:1;background:#0d1118;border:1px solid #455267;border-radi
     } catch (error) {
       if (attempt !== revision) return;
       console.error('Library could not be unlocked:', error);
-      lock('This link could not unlock the library.');
+      lock(usingPassword ? 'Incorrect password, or the library could not be opened.' : 'This link could not unlock the library.');
     }
   }
   document.getElementById('unlock-form').addEventListener('submit', event => {
     event.preventDefault();
-    const value = input.value.trim();
-    let key = value;
-    if (!/^[A-Za-z0-9_-]{43}$/.test(value)) {
-      try { key = new URLSearchParams(new URL(value).hash.slice(1)).get('key') || value; }
-      catch (error) { key = value; }
-    }
-    unlock(key, true);
+    unlock(null, input.value);
   });
   document.getElementById('copy-link').addEventListener('click', async () => {
     const message = document.getElementById('copy-status');
