@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; connect-src 'none'">
+<title>Personal library</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#edf1f7;background:#0d1118;line-height:1.55}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 90% 0%,#19212e 0%,transparent 50%);min-height:100vh}
+[hidden]{display:none!important}main{max-width:1040px;margin:auto;padding:46px 28px 64px}
+.brand{display:flex;align-items:center;gap:10px;font-size:.75rem;letter-spacing:.17em;font-weight:650;color:#aab5c5;text-transform:uppercase}
+.dot{width:8px;height:8px;background:#edb98b;border-radius:50%}h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.045em;margin:26px 0 16px}
+p{color:#aab5c5;margin:0}header{margin-bottom:42px}.intro{max-width:540px;font-size:1.05rem}.topline{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+button,input{font:inherit}button{cursor:pointer;color:#e4eaf3;border:1px solid #374255;border-radius:9px;padding:10px 16px;background:#1b2432;font-weight:600}
+button:hover{background:#273447}a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #edb98b;outline-offset:4px}
+.collection{margin-top:32px}.collection h2{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#aab5c5;margin:0 0 14px;font-weight:650}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.report-card{display:flex;flex-direction:column;min-height:202px;gap:13px;padding:24px;border:1px solid #2b3544;border-radius:14px;background:#141b26;color:inherit;text-decoration:none;transition:border-color .15s,background .15s}
+.report-card:hover{background:#1a2330;border-color:#738199}.card-top{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:.75rem;color:#b8c3d3}
+.access{border:1px solid #39485b;padding:3px 9px;border-radius:6px;font-size:.7rem}.report-card h3{font-size:1.3rem;line-height:1.3;letter-spacing:-.02em;margin:0}
+.report-card p{font-size:.92rem}.card-action{color:#edb98b;font-size:.85rem;font-weight:600;margin-top:auto}
+.privacy{font-size:.82rem;border-top:1px solid #2b3544;margin-top:36px;padding-top:20px;max-width:760px}
+.gate{max-width:610px;margin:70px auto 0}.gate h1{max-width:470px}.gate form{margin-top:30px;padding:24px;border:1px solid #2b3544;border-radius:14px;background:#141b26}
+label{display:block;font-size:.9rem;font-weight:600;margin-bottom:10px}.input-row{display:flex;gap:10px;align-items:stretch}
+input{min-width:0;flex:1;background:#0d1118;border:1px solid #455267;border-radius:8px;padding:11px 12px;color:#edf1f7}
+.help{font-size:.82rem;margin-top:12px}.status{font-size:.9rem;color:#f3c999;margin-top:16px}.gate .privacy{line-height:1.7}
+@media(max-width:600px){main{padding:30px 20px 44px}.cards{grid-template-columns:1fr}.report-card{min-height:185px;padding:21px}.gate{margin-top:50px}.input-row{flex-direction:column}.gate form{padding:20px}.topline{gap:18px}header{margin-bottom:32px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<div class="brand"><span class="dot" aria-hidden="true"></span>Jason / Personal pages</div>
+<section id="gate" class="gate" aria-labelledby="locked-title">
+  <h1 id="locked-title">Your pages, one place.</h1>
+  <p class="intro">A small library for travel plans, research and the things worth keeping.</p>
+  <form id="unlock-form">
+    <label for="library-key">Library link or key</label>
+    <div class="input-row">
+      <input id="library-key" type="password" autocomplete="off" spellcheck="false" required aria-describedby="unlock-help unlock-status">
+      <button type="submit">Open library</button>
+    </div>
+    <p id="unlock-help" class="help">Open your saved bookmark to unlock automatically, or paste its full link here.</p>
+    <p id="unlock-status" class="status" role="status" aria-live="polite"></p>
+  </form>
+  <p class="privacy">The library and its private report links are encrypted. The key stays in your bookmark, not in the public site. No account, cookies or browser storage are needed.</p>
+  <noscript><p class="status">JavaScript is needed to decrypt this library in your browser.</p></noscript>
+</section>
+<section id="library" hidden aria-labelledby="library-title">
+  <header>
+    <div class="topline">
+      <h1 id="library-title">Your personal library</h1>
+      <button id="copy-link" type="button">Copy bookmark link</button>
+    </div>
+    <p class="intro">Plans, research and useful rabbit holes. All within reach.</p>
+    <p id="summary" class="help"></p>
+    <p id="copy-status" class="status" role="status" aria-live="polite"></p>
+  </header>
+  <div id="collections"></div>
+  <p class="privacy">Keep this library bookmark for yourself: it unlocks the private reports below. To share one report, open it and share that report's own link instead. Reports open in a new tab so your library stays here.</p>
+</section>
+</main>
+<script id="encrypted-library" type="application/json">{"version":1,"algorithm":"AES-GCM","iv":"n6aF2DgHLJgMoDEx","ciphertext":"H5SpNi0m0qKJczi+7xOkanJo/Pb2UELIBQ7zvXbwcNe6FfkWzly6eFfVzFKOZgQuSMEE+gE7RyLGJWqh/QlvlbxfejzmLd6DO4WRmlgWSCRdipRk9akj1L6chAeLPfuVkNQhIEwwA3hzFPVl99BzxkkrEQK2k6B0A8dXdk8Upy0MammKIHp6pyZXTw9QhLHzxZyARPFjkkdpeaI7Vof1hGvfGhSuaQ5FplqLk/zPREdPe0cyjha50dAOeoDxR4mlZCyhPgFpGZcFd/OslybfLC2WzI1xhU+05aacmR7xAYkXmEbu8dm2XcDojOYoGG6+iKIqeboUzotmOMRZKays3NYAx5ZAZAHfs2x8ryCoe3y4M4QzFuINnTITnBgwpEAB3xPmzeflMRSwCHKtB4c5LUgjNzM4qo6fP6hp9z/nImAtGncNRyRqpY4QCtaYADAUFV0nz2EdR9oiRw2rYdLQxJ1nfs++mSq7nskfJ+dP21qkEAbqSGY78WRLngmUIdxUQau6JHfAdZnOVKYsYdoq2JXKRcR/xGJnVYiAwPEFrlMXoAJkKT1nV1Wl9eOFyxei/r4rtliZid2uQHU/377P38K6Ge5NnIc8ol3S4iTP1/0vmnMarRhaynsrwRGGf6hSJexSOiFYXZDAOXz//3az+uBhNZuO4dlk5D/4Idcl840vz4HtkGmSiE/Xei4NlhWollOHMdEFKwSyQhOXZ9CfqFmAxqE3u3QkqVkXZjOW6fMX2efV5VOQyfmLL6d1T6xA86RJHvAk7q7WIBsr19KsRh5H/igNqDWK4Kq4r1vdHt9aQCDs5GK6iFylUr8Wi83qiao5QdZmtuA9vLIeAFaC44k+4m25PTsk82hKheppojM5M7BEF6aCJQKZLCTuHUNuta8M/3PZw+hc6fxtfprcw22nfnsxKbNK0NiAC6cSXW7wE3LZP5x+2kvyYu9/CRpGuvBg3Khg0eEIHM1zfLes9ve+982u8Wh9DUzP5XQr74dKIPtbF2MQLx8FxZfgSNo9dDCOfZlcna7SbzBeYLDc7G8QIC0JhzVwEUL2UHbMseuNu2QjYHLQ9CbfZgEGE1Yy1Ozo6JfZyztDVqBn9NpEfGUBFoQ/qFoixS4BAhA0QUP7iqY0KKhp1CSIkJzlibywfMZCQmKuvpw3on3WU80DGFNob38XP+KqKEcCIrL7jEklcKPcDHgV9l+JSuNOywg7ZnntRa5/sQRmuQ69Wlz1xYWOjCHq7gZHl5GJ2cMVuqZh+OIj+MHHl7lY+JPbXteWfNV8Hcwc/fwb7u0n7LLUnz916YGJ1CdG93I2GWcVsLtWOhBAJBu628kZtwcNCU3awvQIyWanFcnAxBBfu+D/uPflNjfV3k9Qxkg9FGmo0uy08UzQonVRmpoeEjPOdG3LPspwjL5fD+59BcXjLYi8rg/9B/GZx6Xse3Sim/hU7tyqyPfkLKu7PU+xY0qUUsKMKF9nUCujuIOqOlHSBbsGotJyQaG53Zh0OofibWU2k+PzkfhphghCceXxN2YuRshmNgqwoMtxGX88oe/IN6JTraRA0LFuRMU="}</script>
+<script>
+(() => {
+  const gate = document.getElementById('gate');
+  const library = document.getElementById('library');
+  const collections = document.getElementById('collections');
+  const status = document.getElementById('unlock-status');
+  const input = document.getElementById('library-key');
+  let revision = 0;
+  let bookmark = '';
+  const decode = text => Uint8Array.from(atob(text.replace(/-/g,'+').replace(/_/g,'/') + '='.repeat((4-text.length%4)%4)), character => character.charCodeAt(0));
+  function lock(message = '') {
+    bookmark = '';
+    collections.replaceChildren();
+    library.hidden = true;
+    gate.hidden = false;
+    status.textContent = message;
+    document.getElementById('copy-status').textContent = '';
+  }
+  function textElement(tag, text, className) {
+    const element = document.createElement(tag);
+    element.textContent = text;
+    if (className) element.className = className;
+    return element;
+  }
+  function validate(catalog) {
+    if (catalog.version !== 1 || !Array.isArray(catalog.reports)) throw new Error('Unsupported library format.');
+    const seen = new Set();
+    return catalog.reports.map(report => {
+      for (const field of ['title','description','collection','path','href']) {
+        if (typeof report[field] !== 'string' || !report[field].trim()) throw new Error('Incomplete report.');
+      }
+      if (!/^[a-z0-9][a-z0-9-]*\.html$/.test(report.path) || report.path === 'index.html' || seen.has(report.path)) throw new Error('Invalid report path.');
+      const target = new URL(report.href, location.href);
+      const expected = new URL(report.path, location.href);
+      if (target.origin !== expected.origin || target.pathname !== expected.pathname || target.search) throw new Error('Invalid report link.');
+      const key = new URLSearchParams(target.hash.slice(1)).get('key');
+      if (typeof report.protected !== 'boolean' || (report.protected ? !/^[A-Za-z0-9_-]{43}$/.test(key || '') : target.hash !== '')) throw new Error('Invalid report access.');
+      seen.add(report.path);
+      return report;
+    });
+  }
+  function render(reports) {
+    const groups = new Map();
+    for (const report of reports) {
+      if (!groups.has(report.collection)) groups.set(report.collection, []);
+      groups.get(report.collection).push(report);
+    }
+    for (const [name, reports] of groups) {
+      const section = document.createElement('section');
+      section.className = 'collection';
+      section.append(textElement('h2', name));
+      const cards = document.createElement('div');
+      cards.className = 'cards';
+      for (const report of reports) {
+        const card = document.createElement('a');
+        card.className = 'report-card';
+        card.href = report.href;
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+        const top = textElement('div', '', 'card-top');
+        top.append(textElement('span', 'Saved report'), textElement('span', report.protected ? 'Private details' : 'Public page', 'access'));
+        card.append(top, textElement('h3', report.title), textElement('p', report.description), textElement('span', 'Open report \u2197', 'card-action'));
+        cards.append(card);
+      }
+      section.append(cards);
+      collections.append(section);
+    }
+    document.getElementById('summary').textContent = `${reports.length} saved pages / ${groups.size} collections`;
+  }
+  async function unlock(keyText, saveAddress = false) {
+    const attempt = ++revision;
+    lock();
+    if (!keyText) return;
+    if (!/^[A-Za-z0-9_-]{43}$/.test(keyText)) {
+      status.textContent = 'That key is incomplete.';
+      return;
+    }
+    if (!globalThis.crypto?.subtle) {
+      status.textContent = 'This browser cannot decrypt the library. Use a current browser over HTTPS.';
+      return;
+    }
+    status.textContent = 'Opening your library...';
+    try {
+      const payload = JSON.parse(document.getElementById('encrypted-library').textContent);
+      if (payload.version !== 1 || payload.algorithm !== 'AES-GCM') throw new Error('Unsupported encryption format.');
+      const key = await crypto.subtle.importKey('raw', decode(keyText), 'AES-GCM', false, ['decrypt']);
+      const plaintext = await crypto.subtle.decrypt({name:'AES-GCM',iv:decode(payload.iv)}, key, decode(payload.ciphertext));
+      const reports = validate(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(plaintext)));
+      if (attempt !== revision) return;
+      if (saveAddress) history.replaceState(null, '', '#key=' + keyText);
+      render(reports);
+      bookmark = location.origin + location.pathname + '#key=' + keyText;
+      input.value = '';
+      status.textContent = '';
+      gate.hidden = true;
+      library.hidden = false;
+    } catch (error) {
+      if (attempt !== revision) return;
+      console.error('Library could not be unlocked:', error);
+      lock('This link could not unlock the library.');
+    }
+  }
+  document.getElementById('unlock-form').addEventListener('submit', event => {
+    event.preventDefault();
+    const value = input.value.trim();
+    let key = value;
+    if (!/^[A-Za-z0-9_-]{43}$/.test(value)) {
+      try { key = new URLSearchParams(new URL(value).hash.slice(1)).get('key') || value; }
+      catch (error) { key = value; }
+    }
+    unlock(key, true);
+  });
+  document.getElementById('copy-link').addEventListener('click', async () => {
+    const message = document.getElementById('copy-status');
+    try {
+      await navigator.clipboard.writeText(bookmark);
+      message.textContent = 'Bookmark link copied. Keep it somewhere private.';
+    } catch (error) {
+      console.error('Could not copy bookmark:', error);
+      message.textContent = 'Copy the full address from your address bar, including everything after #.';
+    }
+  });
+  const openAddress = () => unlock(new URLSearchParams(location.hash.slice(1)).get('key'));
+  window.addEventListener('hashchange', openAddress);
+  openAddress();
+})();
+</script>
+</body>
+</html>
