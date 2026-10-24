@@ -144,3 +144,45 @@ test('password-authenticated checks reject plaintext password matches', () => {
     assert.throws(() => updateLibrary({...f,libraryLink:undefined,password,checkOnly:true}), /password|secret/i);
   }
 });
+
+const unlistedNote = '<!doctype html><meta name="library" content="unlisted"><h1>This page has moved.</h1>';
+
+test('removing retired pages drops only their entries and keeps access', () => {
+  const f = fixture();
+  f.pages.delete('public.html');
+  assert.throws(() => updateLibrary({...f,checkOnly:true}), /inventory/i);
+  const result = updateLibrary({...f,remove:['public.html']});
+  const sealed = payload(result);
+  assert.deepEqual(sealed.password, payload(f.html).password);
+  assert.deepEqual(JSON.parse(decrypt(sealed,f.key)).reports, [f.reports[1]]);
+  assert.equal(updateLibrary({...f,html:result,checkOnly:true}), result);
+  assert.equal(updateLibrary({...f,html:result,libraryLink:undefined,password:f.password,checkOnly:true}), result);
+  assert.throws(() => updateLibrary({...f,remove:['public.html'],checkOnly:true}), /check/i);
+  assert.throws(() => updateLibrary({...f,remove:['public.html','missing.html']}), /not in the catalog/i);
+  assert.throws(() => updateLibrary({...f,remove:['public.html','public.html']}), /not in the catalog/i);
+});
+
+test('removing a page that is still a listed report fails the inventory', () => {
+  const f = fixture();
+  assert.throws(() => updateLibrary({...f,remove:['public.html']}), /inventory/i);
+});
+
+test('unlisted notes replace private reports and stay out of the catalog', () => {
+  const f = fixture();
+  f.pages.set('private.html',unlistedNote);
+  assert.throws(() => updateLibrary({...f,checkOnly:true}), /inventory/i);
+  const result = updateLibrary({...f,remove:['private.html']});
+  assert.deepEqual(JSON.parse(decrypt(payload(result),f.key)).reports, [f.reports[0]]);
+  assert.equal(updateLibrary({...f,html:result,checkOnly:true}), result);
+  assert.throws(() => updateLibrary({...f,html:result,entry:{...added,path:'private.html'}}), /inventory/i);
+});
+
+test('unlisted notes are still checked for encrypted content and leaked secrets', () => {
+  const f = fixture();
+  f.pages.set('note.html',unlistedNote);
+  assert.equal(updateLibrary({...f,checkOnly:true}), f.html);
+  f.pages.set('note.html',unlistedNote + f.pages.get('private.html'));
+  assert.throws(() => updateLibrary({...f,checkOnly:true}), /unlisted|encrypted/i);
+  f.pages.set('note.html',unlistedNote + f.key.toString('base64url'));
+  assert.throws(() => updateLibrary({...f,checkOnly:true}), /key|secret/i);
+});

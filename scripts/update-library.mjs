@@ -8,6 +8,8 @@ import path from 'node:path';
 const base = 'https://jasonk33.github.io/trips/';
 const marker = /(<script id="encrypted-library" type="application\/json">)([^<]+)(<\/script>)/;
 const filename = /^[a-z0-9][a-z0-9-]*\.html$/;
+// A retired page (e.g. a "moved" note) opts out of the catalog with this tag.
+const unlisted = /<meta\s+name="library"\s+content="unlisted"\s*\/?>/i;
 
 function decrypt(payload, key) {
   if (payload.version !== 1 || payload.algorithm !== 'AES-GCM') throw new Error('Unsupported encryption format.');
@@ -33,7 +35,7 @@ function reportPayload(html) {
   return null;
 }
 
-export function updateLibrary({html,pages,libraryLink,password,entry,checkOnly = false}) {
+export function updateLibrary({html,pages,libraryLink,password,entry,remove = [],checkOnly = false}) {
   const match = html.match(marker);
   if (!match) throw new Error('Encrypted library payload is missing.');
   const payload = JSON.parse(match[2]);
@@ -57,6 +59,10 @@ export function updateLibrary({html,pages,libraryLink,password,entry,checkOnly =
     if (!filename.test(report.path) || report.path === 'index.html' || records.has(report.path)) throw new Error('Invalid or duplicate catalog path.');
     records.set(report.path,report);
   }
+  if (remove.length && checkOnly) throw new Error('Check mode cannot edit the catalog.');
+  for (const page of remove) {
+    if (!records.delete(page)) throw new Error(`Cannot remove ${page}: it is not in the catalog.`);
+  }
   if (entry) {
     if (checkOnly) throw new Error('Check mode cannot edit the catalog.');
     if (!filename.test(entry.path) || entry.path === 'index.html') throw new Error('Invalid report path.');
@@ -78,8 +84,12 @@ export function updateLibrary({html,pages,libraryLink,password,entry,checkOnly =
     }
     records.set(entry.path,report);
   }
+  for (const [name,source] of pages) {
+    if (unlisted.test(source) && reportPayload(source)) throw new Error(`Unlisted page ${name} must not contain an encrypted report.`);
+  }
+  const listed = [...pages].filter(([,source]) => !unlisted.test(source)).map(([name]) => name);
   const paths = [...records.keys()].sort();
-  if (JSON.stringify(paths) !== JSON.stringify([...pages.keys()].sort())) throw new Error('Library inventory mismatch: every root HTML report must have exactly one catalog entry. Add metadata for new pages; do not silently drop missing pages.');
+  if (JSON.stringify(paths) !== JSON.stringify(listed.sort())) throw new Error('Library inventory mismatch: every root HTML report must have exactly one catalog entry. Add metadata for new pages; do not silently drop missing pages.');
   const secrets = [key.toString('base64url')];
   if (password) secrets.push(password);
   for (const report of records.values()) {
@@ -119,10 +129,11 @@ async function main() {
   const {values} = parseArgs({options:{
     'library-link-file':{type:'string'}, 'password-stdin':{type:'boolean'},
     page:{type:'string'}, title:{type:'string'}, description:{type:'string'}, collection:{type:'string'},
-    public:{type:'boolean'}, 'report-link-file':{type:'string'}, check:{type:'boolean'}
+    public:{type:'boolean'}, 'report-link-file':{type:'string'}, check:{type:'boolean'},
+    remove:{type:'string',multiple:true}
   }});
   if (values['library-link-file'] && values['password-stdin']) throw new Error('Use one library credential source.');
-  if (!values.check && !values.page) throw new Error('Use --check or provide --page with metadata for a new report.');
+  if (!values.check && !values.page && !values.remove) throw new Error('Use --check, --remove, or provide --page with metadata for a new report.');
   if (values.public && values['report-link-file']) throw new Error('Choose public access or a private report link, not both.');
   const root = fileURLToPath(new URL('../',import.meta.url));
   const names = (await readdir(root)).filter(name => /\.html$/i.test(name) && name !== 'index.html');
@@ -133,11 +144,12 @@ async function main() {
   const index = path.join(root,'index.html');
   const html = await readFile(index,'utf8');
   const result = updateLibrary({
-    html,pages,libraryLink,password,checkOnly:values.check,
+    html,pages,libraryLink,password,checkOnly:values.check,remove:values.remove,
     entry:values.page ? {path:values.page,title:values.title,description:values.description,collection:values.collection,publicPage:values.public,reportLink} : undefined
   });
   if (result !== html) await writeFile(index,result);
-  console.log(`${result === html ? 'Validated' : 'Updated'} encrypted library: ${pages.size} reports; existing password access and sharing keys preserved.`);
+  const hidden = [...pages.values()].filter(source => unlisted.test(source)).length;
+  console.log(`${result === html ? 'Validated' : 'Updated'} encrypted library: ${pages.size - hidden} reports${hidden ? `, ${hidden} unlisted` : ''}; existing password access and sharing keys preserved.`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

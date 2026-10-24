@@ -20,6 +20,10 @@ node scripts/update-library.mjs --library-link-file "$LINK_FILE" \
 node scripts/update-library.mjs --library-link-file "$LINK_FILE" --page existing.html
 node scripts/update-library.mjs --library-link-file "$LINK_FILE" --check
 node --test scripts/update-library.test.mjs
+
+# Retire pages: delete them, or replace them with a note that carries
+# <meta name="library" content="unlisted">, then drop their entries in one run:
+node scripts/update-library.mjs --library-link-file "$LINK_FILE" --remove old.html --remove other.html
 ```
 
 - If the library bookmark file is unavailable, `--password-stdin` can replace `--library-link-file`. Supply it privately through standard input, never as an argument, committed file or public log.
